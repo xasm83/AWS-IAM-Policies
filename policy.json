@@ -1,0 +1,247 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "1",
+      "Effect": "Allow",
+      "Action": "ec2:*",
+      "Condition": {
+        "StringEquals": {
+          "ec2:InstanceType": [
+            "m1.small",
+            "m1.medium",
+            "m1.large",
+            "m1.xlarge",
+            "m3.medium",
+            "m3.large",
+            "t1.micro"
+          ]
+        }
+      },
+      "Resource": [
+        "arn:aws:ec2:us-east-1:*:*"
+      ]
+    },
+    {
+      "Sid": "2",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:RunInstances"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-east-1:*:network-interface/*",
+        "arn:aws:ec2:us-east-1:*:volume/*",
+        "arn:aws:ec2:us-east-1:*:key-pair/*",
+        "arn:aws:ec2:us-east-1:*:security-group/*",
+        "arn:aws:ec2:us-east-1:*:subnet/*",
+        "arn:aws:ec2:us-east-1:*:image/ami-*",
+        "arn:aws:ec2:us-east-1:*:snapshot/*",
+        "arn:aws:ec2:us-east-1:*:placement-group/*"
+      ]
+    },
+    {
+      "Sid": "generalpermsforruninstance",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:Describe*",
+        "ec2:CreateSecurityGroup",
+        "ec2:AuthorizeSecurityGroupIngress",
+        "ec2:AuthorizeSecurityGroupEgress",
+        "ec2:*SecurityGroup*",
+        "ec2:CreateVolume",
+        "ec2:*Vpc*",
+        "ec2:*Subnet*",
+        "ec2:*Gateway*",
+        "ec2:*Vpn*",
+        "ec2:*Route*",
+        "ec2:*Address*",
+        "ec2:*NetworkAcl*",
+        "ec2:*DhcpOptions*",
+        "ec2:*Tags*",
+        "ec2:TerminateInstances",
+        "ec2:CreateKeyPair",
+        "ec2:Delete*",
+        "ec2:Detach*",
+        "ec2:Revoke*",
+        "ec2:TerminateInstances",
+        "ec2:RebootInstances",
+        "ec2:StopInstances",
+        "ec2:StartInstances"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Sid": "elb",
+      "Effect": "Allow",
+      "Action": [
+        "elasticloadbalancing:*"
+      ],
+      "Resource": [
+        "arn:aws:elasticloadbalancing:us-east-1:*:loadbalancer/${aws:username}*",
+        "arn:aws:elasticloadbalancing:us-east-1:*:loadbalancer/awseb*"
+      ]
+    },
+    {
+      "Sid": "describeelb",
+      "Effect": "Allow",
+      "Action": [
+        "elasticloadbalancing:Describe*"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Sid": "tagprotection",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:Delete*",
+        "ec2:Detach*",
+        "ec2:Revoke*",
+        "ec2:TerminateInstances",
+        "ec2:RebootInstances",
+        "ec2:StopInstances",
+        "ec2:StartInstances"
+      ],
+      "Condition": {
+        "StringNotEqualsIfExists": {
+          "ec2:ResourceTag/username": "${aws:username}"
+        },
+        "Null": {
+          "ec2:ResourceTag/username": "false"
+        }
+      },
+      "Resource": [
+        "arn:aws:ec2:*:*:*"
+      ]
+    },
+    {
+      "Sid": "4",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:AttachVolume",
+        "ec2:DetachVolume"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-east-1:*:volume/*"
+      ]
+    },
+    {
+      "Sid": "ebt",
+      "Effect": "Allow",
+      "Action": [
+        "elasticbeanstalk:*"
+      ],
+      "Resource": [
+        "arn:aws:elasticbeanstalk:us-east-1:*:*/${aws:username}*"
+      ]
+    },
+    {
+      "Sid": "ebtgeneral",
+      "Effect": "Allow",
+      "Action": [
+        "elasticbeanstalk:Describe*",
+        "elasticbeanstalk:List*",
+        "elasticbeanstalk:CheckDNSAvailability",
+        "elasticbeanstalk:ValidateConfigurationSettings"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Sid": "s3perms",
+      "Effect": "Allow",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": [
+        "arn:aws:s3:::${aws:username}_*",
+        "arn:aws:s3:::elastic*"
+      ]
+    },
+    {
+      "Sid": "s3permslist",
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListAllMyBuckets"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    },
+    {
+      "Sid": "s3denyperms",
+      "Effect": "Deny",
+      "Action": [
+        "s3:CreateBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ],
+      "Condition": {
+        "StringLike": {
+          "s3:LocationConstraint": [
+            "eu-west-1",
+            "us-west-1",
+            "us-west-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-northeast-1",
+            "sa-east-1"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "cloudformation",
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:*"
+      ],
+      "Resource": [
+        "arn:aws:cloudformation:us-east-1:*:*"
+      ]
+    },
+    {
+      "Sid": "iamforautoactions",
+      "Effect": "Allow",
+      "Action": [
+        "iam:AddRoleToInstanceProfile",
+        "iam:CreateInstanceProfile",
+        "iam:CreateRole",
+        "iam:PassRole",
+        "iam:ListInstanceProfiles"
+      ],
+      "Resource": [
+        "arn:aws:iam::*:*"
+      ]
+    },
+    {
+      "Sid": "sqs",
+      "Effect": "Allow",
+      "Action": [
+        "sqs:*"
+      ],
+      "Resource": [
+        "arn:aws:sqs:us-east-1:*:*"
+      ]
+    },
+    {
+      "Sid": "scaling",
+      "Effect": "Allow",
+      "Action": "autoscaling:*",
+      "Resource": "*"
+    },
+    {
+      "Sid": "cloudwatch",
+      "Action": [
+        "cloudwatch:*"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
